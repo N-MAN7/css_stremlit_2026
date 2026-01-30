@@ -6,191 +6,160 @@ Created on Thu Jan 29 09:48:48 2026
 """
 
 import streamlit as st
+import pandas as pd
+import numpy as np
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
-    page_title="Ntoto Nhleleko Ntimane | Portfolio",
-    page_icon="📈",
+    page_title="Trading Plan & Performance Analyzer",
+    page_icon="📊",
     layout="wide"
 )
 
-# ---------------- STYLING & BACKGROUND ----------------
-st.markdown("""
-<style>
-/* Background with visible data science theme */
-.stApp {
-    background-image:
-        linear-gradient(
-            rgba(13,110,253,0.35),
-            rgba(111,66,193,0.35)
-        ),
-        url("https://images.unsplash.com/photo-1551288049-bebda4e38f71");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
-
-/* Hero text */
-.big-title {
-    font-size: 48px;
-    font-weight: 800;
-    color: white;
-}
-.subtitle {
-    font-size: 22px;
-    color: #f8f9fa;
-}
-
-/* Card styling */
-.card {
-    padding: 25px;
-    border-radius: 15px;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    margin-bottom: 20px;
-}
-
-/* Badges */
-.badge {
-    display: inline-block;
-    padding: 8px 14px;
-    margin: 5px;
-    border-radius: 20px;
-    background-color: #0d6efd;
-    color: white;
-    font-weight: 600;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# ---------------- HERO SECTION ----------------
-st.markdown('<p class="big-title">Ntoto Nhleleko Ntimane</p>', unsafe_allow_html=True)
-st.markdown(
-    '<p class="subtitle">Mathematics & Statistics Student | University of Venda</p>',
-    unsafe_allow_html=True
-)
-
+# ---------------- TITLE ----------------
+st.title("📈 Trading Plan & Performance Analyzer")
 st.write(
-    "📊 Aspiring data-driven problem solver with a strong foundation in mathematics, "
-    "statistics, programming, and analytical thinking."
+    "Log your trades, analyze your performance, identify weaknesses, "
+    "and get actionable tips to improve your trading."
 )
 
 st.divider()
 
-# ---------------- METRICS ----------------
-col1, col2, col3 = st.columns(3)
-col1.metric("🎓 Field", "Maths & Stats")
-col2.metric("🎂 Age", "20")
-col3.metric("📈 Interest", "Data Science")
-
-st.divider()
-
-# ---------------- TABS ----------------
-tabs = st.tabs([
-    "👤 About",
-    "🎓 Education",
-    "🛠 Skills",
-    "🌍 Languages",
-    "📊 Interests",
-    "📬 Contact"
-])
-
-# ---------------- ABOUT ----------------
-with tabs[0]:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("👤 About Me")
-    st.write(
-        """
-        I am **Ntoto Nhleleko Ntimane**, a student at the **University of Venda**
-        studying **Mathematics and Statistics**.
-
-        My interests lie in **data science**, **analytics**, and applying
-        mathematical and statistical methods to solve real-world problems.
-        """
+# ---------------- SESSION STATE ----------------
+if "trades" not in st.session_state:
+    st.session_state.trades = pd.DataFrame(
+        columns=[
+            "Date", "Symbol", "Trade Type",
+            "Entry Price", "Exit Price",
+            "Position Size", "Result"
+        ]
     )
-    st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------------- EDUCATION ----------------
-with tabs[1]:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("🎓 Education")
-    st.markdown(
-        """
-        **Bachelor of Mathematics and Statistics**  
-        University of Venda  
+# ---------------- TRADE ENTRY ----------------
+st.header("📝 Enter a Trade")
 
-        **High School**  
-        Electrical Technology (**Electronics**)
-        """
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------------- SKILLS ----------------
-with tabs[2]:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("🛠 Skills")
-
-    col1, col2 = st.columns(2)
+with st.form("trade_form"):
+    col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.subheader("Programming")
-        st.markdown("""
-        - Python  
-        - C++  
-        - Java  
-        - HTML  
-        - SQL  
-        """)
+        date = st.date_input("Trade Date")
+        symbol = st.text_input("Symbol (e.g. XAUUSD, EURUSD)")
+        trade_type = st.selectbox("Trade Type", ["Buy", "Sell"])
 
     with col2:
-        st.subheader("Mathematics & Statistics")
-        st.markdown("""
-        - Probability & Statistics  
-        - Calculus  
-        - Algebra  
-        - Data Analysis  
-        - Statistical Modelling  
-        """)
-    st.markdown('</div>', unsafe_allow_html=True)
+        entry = st.number_input("Entry Price", format="%.5f")
+        exit = st.number_input("Exit Price", format="%.5f")
+        size = st.number_input("Position Size (Lots)", min_value=0.01, step=0.01)
 
-# ---------------- LANGUAGES ----------------
-with tabs[3]:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("🌍 Languages Spoken")
-    st.markdown("""
-    <span class="badge">English</span>
-    <span class="badge">Xitsonga</span>
-    <span class="badge">Afrikaans</span>
-    """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    with col3:
+        result = st.selectbox("Result", ["Win", "Loss", "Break-even"])
 
-# ---------------- INTERESTS ----------------
-with tabs[4]:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("📊 Academic Interests")
-    st.markdown("""
-    - Data Science & Analytics  
-    - Financial Mathematics & Trading  
-    - Algorithm Design  
-    - Statistical Computing  
-    - Building analytical applications
-    """)
-    st.markdown('</div>', unsafe_allow_html=True)
+    submit = st.form_submit_button("➕ Add Trade")
 
-# ---------------- CONTACT ----------------
-with tabs[5]:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.header("📬 Contact")
-    st.markdown(
-        """
-        **Name:** Ntoto Nhleleko Ntimane  
-        **Email:** ntotonhleleko@gmail.com  
-        **University:** University of Venda  
-        **Field:** Mathematics & Statistics  
-        """
+if submit:
+    new_trade = pd.DataFrame([{
+        "Date": date,
+        "Symbol": symbol.upper(),
+        "Trade Type": trade_type,
+        "Entry Price": entry,
+        "Exit Price": exit,
+        "Position Size": size,
+        "Result": result
+    }])
+
+    st.session_state.trades = pd.concat(
+        [st.session_state.trades, new_trade],
+        ignore_index=True
     )
-    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.success("Trade added successfully!")
 
 st.divider()
-st.caption("© 2026 Ntoto Nhleleko Ntimane | Data Science Portfolio")
+
+# ---------------- TRADE JOURNAL ----------------
+st.header("📒 Trade Journal")
+
+if st.session_state.trades.empty:
+    st.info("No trades entered yet.")
+else:
+    st.dataframe(st.session_state.trades, use_container_width=True)
+
+# ---------------- ANALYSIS ----------------
+st.header("📊 Performance Analysis")
+
+if not st.session_state.trades.empty:
+
+    df = st.session_state.trades.copy()
+
+    total_trades = len(df)
+    wins = len(df[df["Result"] == "Win"])
+    losses = len(df[df["Result"] == "Loss"])
+    breakeven = len(df[df["Result"] == "Break-even"])
+
+    win_rate = (wins / total_trades) * 100 if total_trades > 0 else 0
+
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Total Trades", total_trades)
+    col2.metric("Wins", wins)
+    col3.metric("Losses", losses)
+    col4.metric("Win Rate (%)", f"{win_rate:.2f}")
+
+    st.divider()
+
+    # ---------------- SYMBOL ANALYSIS ----------------
+    st.subheader("📌 Performance by Symbol")
+
+    symbol_perf = df.groupby("Symbol")["Result"].value_counts().unstack(fill_value=0)
+    st.dataframe(symbol_perf, use_container_width=True)
+
+    # ---------------- WEAKNESS DETECTION ----------------
+    st.subheader("⚠ Identified Weak Points")
+
+    weaknesses = []
+
+    if win_rate < 40:
+        weaknesses.append("Low overall win rate")
+
+    if losses > wins:
+        weaknesses.append("More losses than wins")
+
+    frequent_losses = symbol_perf.get("Loss", pd.Series()).sort_values(ascending=False)
+    if not frequent_losses.empty:
+        worst_symbol = frequent_losses.idxmax()
+        if frequent_losses.max() >= 3:
+            weaknesses.append(f"Frequent losses on {worst_symbol}")
+
+    if weaknesses:
+        for w in weaknesses:
+            st.warning(w)
+    else:
+        st.success("No major weaknesses detected. Good discipline!")
+
+    # ---------------- IMPROVEMENT TIPS ----------------
+    st.subheader("💡 Improvement Tips")
+
+    tips = []
+
+    if win_rate < 40:
+        tips.append("Refine your entry criteria and wait for higher-probability setups.")
+
+    if losses > wins:
+        tips.append("Reduce position size and focus on risk management.")
+
+    if "Frequent losses on" in " ".join(weaknesses):
+        tips.append("Consider avoiding or backtesting that symbol further.")
+
+    if total_trades < 20:
+        tips.append("Log more trades to get a clearer performance picture.")
+
+    if tips:
+        for t in tips:
+            st.info(t)
+    else:
+        st.success("Your trading plan looks solid. Stay consistent!")
+
+else:
+    st.info("Enter trades to unlock analysis and insights.")
+
+st.divider()
+st.caption("© 2026 | Trading Plan & Performance Analyzer")
