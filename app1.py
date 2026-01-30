@@ -14,22 +14,23 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------------- BACKGROUND + STYLING ----------------
+# ---------------- STYLING & BACKGROUND ----------------
 st.markdown("""
 <style>
-/* Background image */
+/* Background with visible data science theme */
 .stApp {
-    background-image: linear-gradient(
-        rgba(0,0,0,0.65),
-        rgba(0,0,0,0.65)
-    ),
-    url("https://images.unsplash.com/photo-1555949963-aa79dcee981c");
+    background-image:
+        linear-gradient(
+            rgba(13,110,253,0.35),
+            rgba(111,66,193,0.35)
+        ),
+        url("https://images.unsplash.com/photo-1551288049-bebda4e38f71");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
 }
 
-/* Main text styling */
+/* Hero text */
 .big-title {
     font-size: 48px;
     font-weight: 800;
@@ -37,18 +38,20 @@ st.markdown("""
 }
 .subtitle {
     font-size: 22px;
-    color: #dee2e6;
+    color: #f8f9fa;
 }
 
 /* Card styling */
 .card {
     padding: 25px;
     border-radius: 15px;
-    background-color: rgba(255,255,255,0.95);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    margin-bottom: 20px;
 }
 
-/* Language badge */
+/* Badges */
 .badge {
     display: inline-block;
     padding: 8px 14px;
@@ -70,12 +73,12 @@ st.markdown(
 
 st.write(
     "📊 Aspiring data-driven problem solver with a strong foundation in mathematics, "
-    "statistics, and programming. Passionate about data science, analytics, and real-world impact."
+    "statistics, programming, and analytical thinking."
 )
 
 st.divider()
 
-# ---------------- QUICK STATS ----------------
+# ---------------- METRICS ----------------
 col1, col2, col3 = st.columns(3)
 col1.metric("🎓 Field", "Maths & Stats")
 col2.metric("🎂 Age", "20")
@@ -99,12 +102,11 @@ with tabs[0]:
     st.header("👤 About Me")
     st.write(
         """
-        I am **Ntoto Nhleleko Ntimane**, a Mathematics and Statistics student at the
-        **University of Venda**.
+        I am **Ntoto Nhleleko Ntimane**, a student at the **University of Venda**
+        studying **Mathematics and Statistics**.
 
-        My background blends **analytical thinking**, **programming**, and
-        **statistical reasoning**, with a strong interest in **data science**
-        and applied analytics.
+        My interests lie in **data science**, **analytics**, and applying
+        mathematical and statistical methods to solve real-world problems.
         """
     )
     st.markdown('</div>', unsafe_allow_html=True)
