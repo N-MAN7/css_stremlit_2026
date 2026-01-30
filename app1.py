@@ -7,7 +7,7 @@ Created on Thu Jan 29 09:48:48 2026
 
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
