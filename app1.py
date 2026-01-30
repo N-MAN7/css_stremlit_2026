@@ -7,122 +7,188 @@ Created on Thu Jan 29 09:48:48 2026
 
 import streamlit as st
 
-# Page configuration
+# ---------------- PAGE CONFIG ----------------
 st.set_page_config(
-    page_title="Nhleleko | Portfolio",
-    page_icon="📊",
+    page_title="Ntoto Nhleleko Ntimane | Portfolio",
+    page_icon="📈",
     layout="wide"
 )
 
-# Title
-st.title("👨‍🎓 Nhleleko")
-st.subheader("Mathematics & Statistics Student | University of Venda")
+# ---------------- BACKGROUND + STYLING ----------------
+st.markdown("""
+<style>
+/* Background image */
+.stApp {
+    background-image: linear-gradient(
+        rgba(0,0,0,0.65),
+        rgba(0,0,0,0.65)
+    ),
+    url("https://images.unsplash.com/photo-1555949963-aa79dcee981c");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Main text styling */
+.big-title {
+    font-size: 48px;
+    font-weight: 800;
+    color: white;
+}
+.subtitle {
+    font-size: 22px;
+    color: #dee2e6;
+}
+
+/* Card styling */
+.card {
+    padding: 25px;
+    border-radius: 15px;
+    background-color: rgba(255,255,255,0.95);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* Language badge */
+.badge {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 5px;
+    border-radius: 20px;
+    background-color: #0d6efd;
+    color: white;
+    font-weight: 600;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------- HERO SECTION ----------------
+st.markdown('<p class="big-title">Ntoto Nhleleko Ntimane</p>', unsafe_allow_html=True)
+st.markdown(
+    '<p class="subtitle">Mathematics & Statistics Student | University of Venda</p>',
+    unsafe_allow_html=True
+)
 
 st.write(
-    "Interactive academic portfolio showcasing my background, skills, and interests."
+    "📊 Aspiring data-driven problem solver with a strong foundation in mathematics, "
+    "statistics, and programming. Passionate about data science, analytics, and real-world impact."
 )
 
 st.divider()
 
-# Sidebar navigation
-st.sidebar.title("📍 Navigation")
+# ---------------- QUICK STATS ----------------
+col1, col2, col3 = st.columns(3)
+col1.metric("🎓 Field", "Maths & Stats")
+col2.metric("🎂 Age", "20")
+col3.metric("📈 Interest", "Data Science")
 
-if "page" not in st.session_state:
-    st.session_state.page = "About"
+st.divider()
 
-if st.sidebar.button("👤 About Me"):
-    st.session_state.page = "About"
+# ---------------- TABS ----------------
+tabs = st.tabs([
+    "👤 About",
+    "🎓 Education",
+    "🛠 Skills",
+    "🌍 Languages",
+    "📊 Interests",
+    "📬 Contact"
+])
 
-if st.sidebar.button("🎓 Education"):
-    st.session_state.page = "Education"
-
-if st.sidebar.button("🛠 Skills"):
-    st.session_state.page = "Skills"
-
-if st.sidebar.button("📊 Projects & Interests"):
-    st.session_state.page = "Projects"
-
-if st.sidebar.button("📬 Contact"):
-    st.session_state.page = "Contact"
-
-# Content rendering
-page = st.session_state.page
-
-if page == "About":
+# ---------------- ABOUT ----------------
+with tabs[0]:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("👤 About Me")
     st.write(
         """
-        I am **Nhleleko**, a 20-year-old student at the **University of Venda**,
-        studying **Mathematics and Statistics**.
+        I am **Ntoto Nhleleko Ntimane**, a Mathematics and Statistics student at the
+        **University of Venda**.
 
-        I have a strong interest in problem-solving, data analysis,
-        programming, and applying mathematical and statistical methods
-        to real-world problems.
+        My background blends **analytical thinking**, **programming**, and
+        **statistical reasoning**, with a strong interest in **data science**
+        and applied analytics.
         """
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
-elif page == "Education":
+# ---------------- EDUCATION ----------------
+with tabs[1]:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("🎓 Education")
     st.markdown(
         """
         **Bachelor of Mathematics and Statistics**  
         University of Venda  
 
-        **High School Qualification**  
-        Electrical Technology (Electronics)
+        **High School**  
+        Electrical Technology (**Electronics**)
         """
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
-elif page == "Skills":
+# ---------------- SKILLS ----------------
+with tabs[2]:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("🛠 Skills")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown(
-            """
-            **Programming**
-            - Python
-            - C++
-            - Java
-            - HTML
-            - SQL
-            """
-        )
+        st.subheader("Programming")
+        st.markdown("""
+        - Python  
+        - C++  
+        - Java  
+        - HTML  
+        - SQL  
+        """)
 
     with col2:
-        st.markdown(
-            """
-            **Mathematics & Statistics**
-            - Probability & Statistics
-            - Algebra
-            - Calculus
-            - Data Analysis
-            - Statistical Modelling
-            """
-        )
+        st.subheader("Mathematics & Statistics")
+        st.markdown("""
+        - Probability & Statistics  
+        - Calculus  
+        - Algebra  
+        - Data Analysis  
+        - Statistical Modelling  
+        """)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-elif page == "Projects":
-    st.header("📊 Academic Interests & Projects")
+# ---------------- LANGUAGES ----------------
+with tabs[3]:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("🌍 Languages Spoken")
+    st.markdown("""
+    <span class="badge">English</span>
+    <span class="badge">Xitsonga</span>
+    <span class="badge">Afrikaans</span>
+    """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------------- INTERESTS ----------------
+with tabs[4]:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("📊 Academic Interests")
+    st.markdown("""
+    - Data Science & Analytics  
+    - Financial Mathematics & Trading  
+    - Algorithm Design  
+    - Statistical Computing  
+    - Building analytical applications
+    """)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------------- CONTACT ----------------
+with tabs[5]:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("📬 Contact")
     st.markdown(
         """
-        - Data analysis with Python (Pandas, NumPy)
-        - Algorithm design and problem solving
-        - Financial mathematics and trading analysis
-        - Building educational and analytical applications
-        """
-    )
-
-elif page == "Contact":
-    st.header("📬 Contact Information")
-    st.write(
-        """
-        **Name:** Nhleleko  
+        **Name:** Ntoto Nhleleko Ntimane  
         **Email:** ntotonhleleko@gmail.com  
         **University:** University of Venda  
         **Field:** Mathematics & Statistics  
         """
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
 st.divider()
-st.caption("© 2026 Nhleleko | Interactive Portfolio")
+st.caption("© 2026 Ntoto Nhleleko Ntimane | Data Science Portfolio")
