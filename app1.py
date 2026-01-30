@@ -7,159 +7,190 @@ Created on Thu Jan 29 09:48:48 2026
 
 import streamlit as st
 import pandas as pd
-import numpy as np
+import matplotlib.pyplot as plt
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
-    page_title="Trading Plan & Performance Analyzer",
+    page_title="Trading Journal & Analytics",
     page_icon="📊",
     layout="wide"
 )
 
-# ---------------- TITLE ----------------
-st.title("📈 Trading Plan & Performance Analyzer")
+st.title("📈 Trading Journal & Performance Analytics")
 st.write(
-    "Log your trades, analyze your performance, identify weaknesses, "
-    "and get actionable tips to improve your trading."
+    "Analyze your trading performance with charts, daily win rates, "
+    "and personalized improvement insights."
 )
 
 st.divider()
 
+# ---------------- DEMO DATA ----------------
+def demo_data():
+    return pd.DataFrame({
+        "Date": pd.to_datetime([
+            "2024-01-02", "2024-01-02", "2024-01-03",
+            "2024-01-04", "2024-01-04", "2024-01-05",
+            "2024-01-06", "2024-01-07"
+        ]),
+        "Symbol": ["XAUUSD", "EURUSD", "XAUUSD", "GBPUSD", "EURUSD", "XAUUSD", "EURUSD", "XAUUSD"],
+        "Trade Type": ["Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Buy"],
+        "Entry Price": [2030, 1.0950, 2045, 1.2700, 1.1000, 2050, 1.0900, 2060],
+        "Exit Price": [2040, 1.0920, 2035, 1.2650, 1.1050, 2040, 1.0950, 2070],
+        "Position Size": [0.5, 0.3, 0.4, 0.2, 0.3, 0.5, 0.4, 0.6],
+        "Result": ["Win", "Win", "Loss", "Win", "Win", "Loss", "Win", "Win"]
+    })
+
 # ---------------- SESSION STATE ----------------
+if "mode" not in st.session_state:
+    st.session_state.mode = "demo"
+
 if "trades" not in st.session_state:
-    st.session_state.trades = pd.DataFrame(
-        columns=[
-            "Date", "Symbol", "Trade Type",
-            "Entry Price", "Exit Price",
-            "Position Size", "Result"
-        ]
-    )
+    st.session_state.trades = demo_data()
 
-# ---------------- TRADE ENTRY ----------------
-st.header("📝 Enter a Trade")
+# ---------------- MODE SELECTION ----------------
+st.subheader("🔁 Choose Mode")
 
-with st.form("trade_form"):
-    col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
-    with col1:
-        date = st.date_input("Trade Date")
-        symbol = st.text_input("Symbol (e.g. XAUUSD, EURUSD)")
-        trade_type = st.selectbox("Trade Type", ["Buy", "Sell"])
+with col1:
+    if st.button("📊 Use Demo Data"):
+        st.session_state.mode = "demo"
+        st.session_state.trades = demo_data()
 
-    with col2:
-        entry = st.number_input("Entry Price", format="%.5f")
-        exit = st.number_input("Exit Price", format="%.5f")
-        size = st.number_input("Position Size (Lots)", min_value=0.01, step=0.01)
-
-    with col3:
-        result = st.selectbox("Result", ["Win", "Loss", "Break-even"])
-
-    submit = st.form_submit_button("➕ Add Trade")
-
-if submit:
-    new_trade = pd.DataFrame([{
-        "Date": date,
-        "Symbol": symbol.upper(),
-        "Trade Type": trade_type,
-        "Entry Price": entry,
-        "Exit Price": exit,
-        "Position Size": size,
-        "Result": result
-    }])
-
-    st.session_state.trades = pd.concat(
-        [st.session_state.trades, new_trade],
-        ignore_index=True
-    )
-
-    st.success("Trade added successfully!")
+with col2:
+    if st.button("✍️ Enter My Own Trades"):
+        st.session_state.mode = "user"
+        st.session_state.trades = pd.DataFrame(
+            columns=[
+                "Date", "Symbol", "Trade Type",
+                "Entry Price", "Exit Price",
+                "Position Size", "Result"
+            ]
+        )
 
 st.divider()
 
-# ---------------- TRADE JOURNAL ----------------
-st.header("📒 Trade Journal")
+df = st.session_state.trades
 
-if st.session_state.trades.empty:
-    st.info("No trades entered yet.")
-else:
-    st.dataframe(st.session_state.trades, use_container_width=True)
+# ---------------- TRADE ENTRY (USER MODE ONLY) ----------------
+if st.session_state.mode == "user":
+    st.header("📝 Add a Trade")
 
-# ---------------- ANALYSIS ----------------
-st.header("📊 Performance Analysis")
+    with st.form("trade_form"):
+        col1, col2, col3 = st.columns(3)
 
-if not st.session_state.trades.empty:
+        with col1:
+            date = st.date_input("Trade Date")
+            symbol = st.text_input("Symbol (e.g. XAUUSD)")
+            trade_type = st.selectbox("Trade Type", ["Buy", "Sell"])
 
-    df = st.session_state.trades.copy()
+        with col2:
+            entry = st.number_input("Entry Price", format="%.5f")
+            exit = st.number_input("Exit Price", format="%.5f")
+            size = st.number_input("Position Size (Lots)", min_value=0.01, step=0.01)
 
-    total_trades = len(df)
-    wins = len(df[df["Result"] == "Win"])
-    losses = len(df[df["Result"] == "Loss"])
-    breakeven = len(df[df["Result"] == "Break-even"])
+        with col3:
+            result = st.selectbox("Result", ["Win", "Loss", "Break-even"])
 
-    win_rate = (wins / total_trades) * 100 if total_trades > 0 else 0
+        submit = st.form_submit_button("➕ Add Trade")
 
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total Trades", total_trades)
-    col2.metric("Wins", wins)
-    col3.metric("Losses", losses)
-    col4.metric("Win Rate (%)", f"{win_rate:.2f}")
+    if submit:
+        new_trade = pd.DataFrame([{
+            "Date": date,
+            "Symbol": symbol.upper(),
+            "Trade Type": trade_type,
+            "Entry Price": entry,
+            "Exit Price": exit,
+            "Position Size": size,
+            "Result": result
+        }])
 
-    st.divider()
+        st.session_state.trades = pd.concat(
+            [st.session_state.trades, new_trade],
+            ignore_index=True
+        )
 
-    # ---------------- SYMBOL ANALYSIS ----------------
-    st.subheader("📌 Performance by Symbol")
-
-    symbol_perf = df.groupby("Symbol")["Result"].value_counts().unstack(fill_value=0)
-    st.dataframe(symbol_perf, use_container_width=True)
-
-    # ---------------- WEAKNESS DETECTION ----------------
-    st.subheader("⚠ Identified Weak Points")
-
-    weaknesses = []
-
-    if win_rate < 40:
-        weaknesses.append("Low overall win rate")
-
-    if losses > wins:
-        weaknesses.append("More losses than wins")
-
-    frequent_losses = symbol_perf.get("Loss", pd.Series()).sort_values(ascending=False)
-    if not frequent_losses.empty:
-        worst_symbol = frequent_losses.idxmax()
-        if frequent_losses.max() >= 3:
-            weaknesses.append(f"Frequent losses on {worst_symbol}")
-
-    if weaknesses:
-        for w in weaknesses:
-            st.warning(w)
-    else:
-        st.success("No major weaknesses detected. Good discipline!")
-
-    # ---------------- IMPROVEMENT TIPS ----------------
-    st.subheader("💡 Improvement Tips")
-
-    tips = []
-
-    if win_rate < 40:
-        tips.append("Refine your entry criteria and wait for higher-probability setups.")
-
-    if losses > wins:
-        tips.append("Reduce position size and focus on risk management.")
-
-    if "Frequent losses on" in " ".join(weaknesses):
-        tips.append("Consider avoiding or backtesting that symbol further.")
-
-    if total_trades < 20:
-        tips.append("Log more trades to get a clearer performance picture.")
-
-    if tips:
-        for t in tips:
-            st.info(t)
-    else:
-        st.success("Your trading plan looks solid. Stay consistent!")
-
-else:
-    st.info("Enter trades to unlock analysis and insights.")
+        st.success("Trade added successfully!")
 
 st.divider()
-st.caption("© 2026 | Trading Plan & Performance Analyzer")
+
+# ---------------- TRADE HISTORY ----------------
+st.header("📒 Trade History")
+
+if df.empty:
+    st.info("No trades available.")
+    st.stop()
+
+st.dataframe(df, use_container_width=True)
+
+# ---------------- OVERALL METRICS ----------------
+st.header("📊 Overall Performance")
+
+total = len(df)
+wins = len(df[df["Result"] == "Win"])
+losses = len(df[df["Result"] == "Loss"])
+win_rate = (wins / total) * 100 if total > 0 else 0
+
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total Trades", total)
+col2.metric("Wins", wins)
+col3.metric("Losses", losses)
+col4.metric("Win Rate (%)", f"{win_rate:.2f}")
+
+st.divider()
+
+# ---------------- PIE CHARTS ----------------
+st.header("🥧 Trade Distribution")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("Results")
+    results = df["Result"].value_counts()
+    fig1, ax1 = plt.subplots()
+    ax1.pie(results, labels=results.index, autopct="%1.1f%%", startangle=90)
+    ax1.axis("equal")
+    st.pyplot(fig1)
+
+with col2:
+    st.subheader("Symbols")
+    symbols = df["Symbol"].value_counts()
+    fig2, ax2 = plt.subplots()
+    ax2.pie(symbols, labels=symbols.index, autopct="%1.1f%%", startangle=90)
+    ax2.axis("equal")
+    st.pyplot(fig2)
+
+st.divider()
+
+# ---------------- DAILY PERFORMANCE ----------------
+st.header("📅 Daily Performance")
+
+daily = (
+    df.groupby(["Date", "Result"])
+    .size()
+    .unstack(fill_value=0)
+    .reset_index()
+)
+
+daily["Total Trades"] = daily.drop(columns=["Date"]).sum(axis=1)
+daily["Win Rate (%)"] = (daily.get("Win", 0) / daily["Total Trades"] * 100).round(2)
+
+st.dataframe(daily, use_container_width=True)
+
+st.divider()
+
+# ---------------- WEAKNESSES & TIPS ----------------
+st.header("⚠ Weaknesses & 💡 Tips")
+
+if win_rate < 40:
+    st.warning("Low win rate detected. Improve trade selection.")
+if losses > wins:
+    st.warning("More losses than wins. Review risk management.")
+
+if win_rate >= 40 and losses <= wins:
+    st.success("Good trading discipline detected. Stay consistent.")
+
+st.info("Tip: Always journal your trades immediately after closing them.")
+
+st.divider()
+st.caption("© 2026 | Trading Journal with Demo & User Mode")
